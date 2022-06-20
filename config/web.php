@@ -1,5 +1,6 @@
 <?php
 
+use app\components\FormatSize;
 use app\models\User;
 use yii\caching\FileCache;
 use yii2assets\pdfjs\Module;
@@ -55,8 +56,11 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 '<alias:login>' => 'site/<alias>',
-                '<alias:about>/<id:(?:[^_\W]|-)+>' => 'site/<alias>',
+                '<alias:book>/<id:(?:[^_\W]|-)+>' => 'site/<alias>',
             ],
+        ],
+        'formatsize' => [
+            'class' => FormatSize::class,
         ],
     ],
     'modules' => [

@@ -2,15 +2,14 @@
 
 namespace app\controllers;
 
-use app\models\Banner;
 use app\models\Book;
 use app\models\BookAuthor;
 use app\models\BookFile;
 use app\models\Category;
 use Yii;
 use yii\data\Pagination;
+use yii\db\Exception;
 use yii\filters\AccessControl;
-use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -68,6 +67,7 @@ class SiteController extends Controller
      * Displays homepage.
      *
      * @return string
+     * @throws Exception
      */
     public function actionIndex(): string
     {
@@ -80,10 +80,9 @@ class SiteController extends Controller
         $books = $query->offset($pages->offset)
             ->limit($pages->limit)
             ->all();
-        $categories = Category::findAll(['status' => Category::STATUS_ACTIVE]);
 
         return $this->render('index', [
-            'categories' => $categories,
+            'categories' => $this->findCategory(),
             'books' => $books,
             'pages' => $pages,
         ]);
@@ -96,7 +95,7 @@ class SiteController extends Controller
      * @return string
      * @throws NotFoundHttpException
      */
-    public function actionAbout($id): string
+    public function actionBook($id): string
     {
         $book = $this->findBook($id);
         $book_file = BookFile::findOne(['book_id' => $book['id']]);
@@ -192,7 +191,7 @@ class SiteController extends Controller
             ->one();
         try {
 
-            $data['file_path'] = Yii::getAlias('@webroot') . '/' . $data['file_path']. $data['file_name'];
+            $data['file_path'] = Yii::getAlias('@webroot') . '/' . $data['file_path'] . $data['file_name'];
 //            $path = Yii::getAlias('@webroot').'/bukti/'.$download->bukti;
             $data['file_name'] = 'download1.pdf';
 
@@ -208,6 +207,17 @@ class SiteController extends Controller
 //            return readfile($data['file_path']);
 //        }
 //        return $this->redirect('error');
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function findCategory()
+    {
+        $sql = 'SELECT [[category.id]], [[category.title]], (SELECT COUNT(*) FROM {{book}} WHERE [[category.id]] = [[book.category_id]]) AS book_count FROM {{category}} WHERE status = :status';
+        $query = Yii::$app->db->createCommand($sql);
+        $query->bindValue(':status', Category::STATUS_ACTIVE);
+        return $query->queryAll();
     }
 
 

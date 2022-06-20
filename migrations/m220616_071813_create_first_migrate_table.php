@@ -64,13 +64,6 @@ class m220616_071813_create_first_migrate_table extends Migration
             'number' => $this->bigInteger(),
         ]);
 
-        $this->createTable('{{%reviews}}', [
-            'book_id' => $this->integer(),
-            'full_name' => $this->string(),
-            'description' => $this->string(),
-            'created_date' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP'),
-        ]);
-
         $this->createTable('{{%book_file}}', [
             'id' => $this->primaryKey(),
             'book_id' => $this->integer(),
@@ -84,7 +77,6 @@ class m220616_071813_create_first_migrate_table extends Migration
         $this->addForeignKey('book_book_author_fk', '{{%book_author}}', 'book_id', '{{%book}}', 'id');
         $this->addForeignKey('book_downloads_fk', '{{%downloads}}', 'book_id', '{{%book}}', 'id');
         $this->addForeignKey('book_views_fk', '{{%views}}', 'book_id', '{{%book}}', 'id');
-        $this->addForeignKey('book_reviews_fk', '{{%reviews}}', 'book_id', '{{%book}}', 'id');
         $this->addForeignKey('book_readings_fk', '{{%readings}}', 'book_id', '{{%book}}', 'id');
 
     }

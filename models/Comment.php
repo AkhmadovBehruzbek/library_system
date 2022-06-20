@@ -3,36 +3,38 @@
 namespace app\models;
 
 use Yii;
-use yii\db\ActiveQuery;
 
 /**
- * This is the model class for table "book_author".
+ * This is the model class for table "comment".
  *
  * @property int $id
  * @property int|null $book_id
  * @property string|null $full_name
+ * @property string|null $email
+ * @property string|null $description
+ * @property string $created_date
  *
  * @property Book $book
  */
-class BookAuthor extends \yii\db\ActiveRecord
+class Comment extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName(): string
+    public static function tableName()
     {
-        return 'book_author';
+        return 'comment';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            [['full_name'], 'required'],
             [['book_id'], 'integer'],
-            [['full_name'], 'string', 'max' => 255],
+            [['created_date'], 'safe'],
+            [['full_name', 'email', 'description'], 'string', 'max' => 255],
             [['book_id'], 'exist', 'skipOnError' => true, 'targetClass' => Book::className(), 'targetAttribute' => ['book_id' => 'id']],
         ];
     }
@@ -40,21 +42,24 @@ class BookAuthor extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels(): array
+    public function attributeLabels()
     {
         return [
             'id' => 'ID',
             'book_id' => 'Book ID',
-            'full_name' => 'Kitob Muallifi',
+            'full_name' => 'Full Name',
+            'email' => 'Email',
+            'description' => 'Description',
+            'created_date' => 'Created Date',
         ];
     }
 
     /**
      * Gets query for [[Book]].
      *
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
-    public function getBook(): ActiveQuery
+    public function getBook()
     {
         return $this->hasOne(Book::className(), ['id' => 'book_id']);
     }

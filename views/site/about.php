@@ -1,6 +1,3 @@
-<br>
-<br>
-<br>
 <style>
     .modal-body {
         padding: 0 !important;
@@ -22,25 +19,44 @@
 </style>
 <?php
 
-
 use yii\bootstrap4\Modal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
+/**
+ * @var $book app\models\Book
+ * @var $book_file app\models\BookFile
+ * @var $book_author app\models\BookAuthor
+ */
 
 Modal::begin([
-    'title' => '<h2>Hello world</h2>',
+    'title' => $book['name'],
     'size' => 'modal-lg'
 ]);
 
-echo '<div class="open-book">';
 echo \yii2assets\pdfjs\PdfJs::widget([
     'url' => Url::base() . '/' . $book_file['file_path'] . $book_file['file_name']
 ]);
-echo '</div>';
-
 Modal::end();
 ?>
+<!-- Start Bradcaump area -->
+<div class="ht__bradcaump__area bg-image--2">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="bradcaump__inner text-center">
+                    <h2 class="bradcaump-title"><?= $book['name'] ?></h2>
+                    <nav class="bradcaump-content">
+                        <a class="breadcrumb_item" href="/">Bosh sahifa</a>
+                        <span class="brd-separetor">/</span>
+                        <span class="breadcrumb_item active"><?= $book['name'] ?></span>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Bradcaump area -->
 <!-- Start main Content -->
 <div class="maincontent bg--white pt--80 pb--55">
     <div class="container">
@@ -51,7 +67,8 @@ Modal::end();
                         <div class="col-lg-6 col-12">
                             <div class="wn__fotorama__wrapper">
                                 <div class="fotorama wn__fotorama__action" data-nav="thumbs">
-                                    <a href="1.jpg"><img src="/web/images/book/<?= $book['image'] ?>" alt=""></a>
+                                    <a href="/web/images/book/<?= $book['image'] ?>"><img
+                                                src="/web/images/book/<?= $book['image'] ?>" alt=""></a>
                                 </div>
                             </div>
                         </div>
@@ -92,23 +109,19 @@ Modal::end();
                                     <ul>
                                         <li class="categories-title">Ulashish :</li>
                                         <li>
-                                            <a href="#">
-                                                <i class="icon-social-twitter icons"></i>
+                                            <a href="https://t.me/share/url?url={url}&text=http://library-system.local/book/<?= $book['id'] ?>">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"
+                                                     stroke-width="2" stroke="#000000" fill="none"
+                                                     class="duration-300 transform transition-all"
+                                                     style="width: 19px; height: 19px; margin-bottom: 6px; margin-right: 2px">
+                                                    <path d="M26.67 38.57l-.82 11.54A2.88 2.88 0 0028.14 49l5.5-5.26 11.42 8.35c2.08 1.17 3.55.56 4.12-1.92l7.49-35.12h0c.66-3.09-1.08-4.33-3.16-3.55l-44 16.85C6.47 29.55 6.54 31.23 9 32l11.26 3.5 25.33-14.79c1.23-.83 2.36-.37 1.44.44z"
+                                                          stroke-linecap="round"></path>
+                                                </svg>
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#">
-                                                <i class="icon-social-tumblr icons"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
+                                            <a href="http://www.facebook.com/sharer.php?u=http://library-system.local/book/<?= $book['id'] ?>">
                                                 <i class="icon-social-facebook icons"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <i class="icon-social-linkedin icons"></i>
                                             </a>
                                         </li>
                                     </ul>
@@ -119,8 +132,10 @@ Modal::end();
                 </div>
                 <div class="product__info__detailed">
                     <div class="pro_details_nav nav justify-content-start" role="tablist">
-                        <a class="nav-item nav-link active" data-toggle="tab" href="#nav-details" role="tab">Kitob haqida</a>
-                        <a class="nav-item nav-link" data-toggle="tab" href="#nav-review" role="tab">Fikr mulohazalar</a>
+                        <a class="nav-item nav-link active" data-toggle="tab" href="#nav-details" role="tab">Kitob
+                            haqida</a>
+                        <a class="nav-item nav-link" data-toggle="tab" href="#nav-review" role="tab">Fikr
+                            mulohazalar</a>
                     </div>
                     <div class="tab__container">
                         <!-- Start Single Tab Content -->
@@ -132,7 +147,7 @@ Modal::end();
                         <!-- End Single Tab Content -->
                         <!-- Start Single Tab Content -->
                         <div class="pro__tab_label tab-pane fade" id="nav-review" role="tabpanel">
-                            <div class="review-fieldset">
+                            <div class="review-fieldset" style=" padding-top: 0px; border-top: 0">
                                 <h3>Fikr qoldiring</h3>
                                 <div class="review_form_field">
                                     <div class="input__box">
@@ -144,7 +159,7 @@ Modal::end();
                                         <input id="summery_field" type="email" name="summery">
                                     </div>
                                     <div class="input__box">
-                                        <span>Kitob haqida fikringiz qanaqa</span>
+                                        <span>Kitob haqida fikringiz</span>
                                         <textarea name="review"></textarea>
                                     </div>
                                     <div class="review-form-actions">

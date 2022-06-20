@@ -30,6 +30,7 @@ use yii\db\ActiveQuery;
 class Book extends \yii\db\ActiveRecord
 {
     public const STATUS_ACTIVE = 1;
+    public const STATUS_INACTIVE = 0;
 
     /**
      * {@inheritdoc}
@@ -61,14 +62,14 @@ class Book extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'category_id' => 'Category ID',
-            'name' => 'Name',
-            'description' => 'Description',
-            'pages_count' => 'Pages Count',
-            'published_date' => 'Published Date',
-            'image' => 'Image',
-            'created_date' => 'Created Date',
-            'updated_date' => 'Updated Date',
+            'category_id' => 'Kategoriya',
+            'name' => 'Kiton nomi',
+            'description' => 'Kitob haqida',
+            'pages_count' => 'Sahifalar soni',
+            'published_date' => 'Nashr qilingan yili',
+            'image' => 'Rasmi',
+            'created_date' => 'Kiritilgan sana',
+            'updated_date' => 'Tahrirlangan sana',
         ];
     }
 
@@ -79,7 +80,7 @@ class Book extends \yii\db\ActiveRecord
      */
     public function getBookAuthors(): ActiveQuery
     {
-        return $this->hasMany(BookAuthor::className(), ['book_id' => 'id']);
+        return $this->hasOne(BookAuthor::className(), ['book_id' => 'id']);
     }
 
     /**
@@ -93,13 +94,23 @@ class Book extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[BookFile]].
+     *
+     * @return ActiveQuery
+     */
+    public function getBookFile(): ActiveQuery
+    {
+        return $this->hasOne(BookFile::className(), ['book_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[Downloads]].
      *
      * @return ActiveQuery
      */
     public function getDownloads(): ActiveQuery
     {
-        return $this->hasMany(Downloads::className(), ['book_id' => 'id']);
+        return $this->hasOne(Downloads::className(), ['book_id' => 'id']);
     }
 
     /**
@@ -129,6 +140,6 @@ class Book extends \yii\db\ActiveRecord
      */
     public function getViews(): ActiveQuery
     {
-        return $this->hasMany(Views::className(), ['book_id' => 'id']);
+        return $this->hasOne(Views::className(), ['book_id' => 'id']);
     }
 }

@@ -634,7 +634,7 @@ a {
   background-size: cover;
   background-position: center center; }
 .bg-image--2 {
-  background-image: url(images/bg/2.jpg);
+  background-image: url(images/bg/2.webp);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center; }
@@ -654,7 +654,7 @@ a {
   background-size: cover;
   background-position: center center; }
 .bg-image--6 {
-  background-image: url(images/bg/6.png);
+  background-image: url(images/bg/6.jpg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center; }

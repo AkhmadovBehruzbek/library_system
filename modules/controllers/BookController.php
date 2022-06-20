@@ -6,7 +6,6 @@ use app\models\Book;
 use app\models\BookAuthor;
 use app\models\BookFile;
 use app\models\BookSearch;
-use phpDocumentor\Reflection\DocBlock\Tags\Author;
 use Yii;
 use yii\base\Exception;
 use yii\helpers\FileHelper;
@@ -19,7 +18,7 @@ use yii\web\UploadedFile;
 /**
  * BookController implements the CRUD actions for Book model.
  */
-class BookController extends Controller
+class BookController extends RoleController
 {
     /**
      * @inheritDoc
@@ -87,53 +86,62 @@ class BookController extends Controller
 
             $pdf_file = UploadedFile::getInstance($book_file, 'file_name');
             $image_file = UploadedFile::getInstance($model, 'image');
-            $fileRoot = Yii::getAlias("@app/web/");
-            $filePath = 'document/' . date('Y-m') . '/';
-            $imagePath = 'images/book/';
+            $pdf_path = 'document/' . date('Y-m') . '/';
+            $file_path = $this->filePath($pdf_path);
+            $image_path = $this->filePath('images/book/');
+
+            /** files uploads start */
+            if ($image_file !== null) {
+                $image_name = $this->randomFileName($image_file);
+
+                if (!is_dir($image_path)) {
+                    FileHelper::createDirectory($image_path);
+                }
+                $image_file->saveAs($image_path . $image_name);
+            }
 
             if ($pdf_file !== null) {
-                $fileName = date('d_m_Y') . '_' . Yii::$app->security->generateRandomString(32) . '.' . $pdf_file->extension;
-                if (!is_dir($fileRoot . $filePath)) {
-                    FileHelper::createDirectory($fileRoot . $filePath);
+                $file_name = $this->randomFileName($pdf_file);
+
+                if (!is_dir($file_path)) {
+                    FileHelper::createDirectory($file_path);
                 }
-                $pdf_file->saveAs($fileRoot . $filePath . $fileName);
+                $pdf_file->saveAs($file_path . $file_name);
+            }
 
-                $imageName = date('d_m_Y') . '_' . Yii::$app->security->generateRandomString(32) . '.' . $image_file->extension;
-                if (!is_dir($fileRoot . $imagePath)) {
-                    FileHelper::createDirectory($fileRoot . $imagePath);
+            $transaction = \Yii::$app->db->beginTransaction();
+            try {
+                /** db start */
+                $model->status = Book::STATUS_ACTIVE;
+                $model->image = $image_name;
+
+                if (!$model->save()) {
+                    throw new NotFoundHttpException($model->errors);
                 }
-                $image_file->saveAs($fileRoot . $imagePath . $imageName);
 
-                $transaction = \Yii::$app->db->beginTransaction();
-                try {
-                    $model->status = Book::STATUS_ACTIVE;
-                    $model->image = $imageName;
-                    if (!$model->save()) {
-                        throw new NotFoundHttpException($model->errors);
-                    }
-
-                    $book_author->book_id = $model->id;
-                    if (!$book_author->save()) {
-                        throw new NotFoundHttpException($book_author->errors);
-                    }
-
-                    $book_file->book_id = $model->id;
-                    $book_file->file_name = $fileName;
-                    $book_file->file_path = $filePath;
-                    $book_file->file_size = $pdf_file->size;
-                    if (!$book_file->save()) {
-                        throw new NotFoundHttpException($book_file->errors);
-                    }
-
-                    \Yii::$app->session->setFlash('success', 'Kitob qo\'shildi');
-                    $transaction->commit();
-                    return $this->redirect('index');
-
-                } catch (\Exception $e) {
-                    \Yii::$app->session->setFlash('error', $e->getMessage());
-                    $transaction->rollBack();
-                    return $this->redirect('index');
+                foreach (explode(',', $book_author->full_name) as $author) {
+                    $new_author = new BookAuthor();
+                    $new_author->book_id = $model->id;
+                    $new_author->full_name = $author;
+                    $new_author->save();
                 }
+
+                $book_file->book_id = $model->id;
+                $book_file->file_name = $file_name;
+                $book_file->file_path = $pdf_path;
+                $book_file->file_size = $pdf_file->size;
+                if (!$book_file->save()) {
+                    throw new NotFoundHttpException($book_file->errors);
+                }
+
+                \Yii::$app->session->setFlash('success', 'Kitob qo\'shildi');
+                $transaction->commit();
+                return $this->redirect('index');
+
+            } catch (\Exception $e) {
+                \Yii::$app->session->setFlash('error', $e->getMessage());
+                $transaction->rollBack();
+                return $this->redirect('index');
             }
         } else {
             $model->loadDefaultValues();
@@ -141,7 +149,8 @@ class BookController extends Controller
         return $this->render('create', [
             'model' => $model,
             'book_file' => $book_file,
-            'book_author' => $book_author
+            'book_author' => $book_author,
+            'category_list' => $this->findCategoryList()
         ]);
     }
 
@@ -151,21 +160,97 @@ class BookController extends Controller
      * @param int $id ID
      * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws Exception
      */
     public function actionUpdate(int $id)
     {
-        $model = $this->findModel($id);
-        $author = BookAuthor::findOne(['book_id' => $model->id]);
-        $file = BookFile::findOne(['book_id' => $model->id]);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $model = $this->findModel($id);
+        $book_author = BookAuthor::findOne(['book_id' => $model->id]);
+        $book_file = BookFile::findOne(['book_id' => $model->id]);
+        $old_file_name = $book_file->file_name;
+        $old_file_size = $book_file->file_size;
+        $old_file_path = $book_file->file_path;
+        $old_image_name = $model->image;
+
+        if ($this->request->isPost) {
+            $model->load($this->request->post());
+            $book_file->load($this->request->post());
+            $book_author->load($this->request->post());
+
+            $pdf_file = UploadedFile::getInstance($book_file, 'file_name');
+            $image_file = UploadedFile::getInstance($model, 'image');
+            $pdf_path = 'document/' . date('Y-m') . '/';
+            $file_path = $this->filePath($pdf_path);
+            $image_path = $this->filePath('images/book/');
+            $model->image = $old_image_name;
+            $book_file->file_name = $old_file_name;
+            $book_file->file_path = $old_file_path;
+            $book_file->file_size = $old_file_size;
+
+
+            /** files uploads start */
+            if ($image_file !== null) {
+                $image_name = $this->randomFileName($image_file);
+
+                if (!is_dir($image_path)) {
+                    FileHelper::createDirectory($image_path);
+                }
+                $image_file->saveAs($image_path . $image_name);
+                $model->image = $image_name;
+            }
+
+            if ($pdf_file !== null) {
+                $file_name = $this->randomFileName($pdf_file);
+
+                if (!is_dir($file_path)) {
+                    FileHelper::createDirectory($file_path);
+                }
+                $pdf_file->saveAs($file_path . $file_name);
+                $book_file->file_name = $file_name;
+                $book_file->file_path = $pdf_path;
+                $book_file->file_size = $pdf_file->size;
+            }
+
+            $transaction = \Yii::$app->db->beginTransaction();
+            try {
+                /** db start */
+                $model->status = Book::STATUS_ACTIVE;
+
+                if (!$model->save()) {
+                    throw new NotFoundHttpException($model->errors);
+                }
+                BookAuthor::deleteAll(['book_id' => $model->id]);
+                foreach (explode(',', $book_author->full_name) as $author) {
+                    $new_author = new BookAuthor();
+                    $new_author->book_id = $model->id;
+                    $new_author->full_name = $author;
+                    $new_author->save();
+                }
+
+                $book_file->book_id = $model->id;
+                if (!$book_file->save()) {
+                    throw new NotFoundHttpException($book_file->errors);
+                }
+
+                \Yii::$app->session->setFlash('success', 'Kitob ma\'lumotlari o\'zgartirildi');
+                $transaction->commit();
+                return $this->redirect('index');
+
+            } catch (\Exception $e) {
+                \Yii::$app->session->setFlash('error', $e->getMessage());
+                $transaction->rollBack();
+                return $this->redirect('index');
+            }
+        } else {
+            $model->loadDefaultValues();
         }
 
         return $this->render('update', [
             'model' => $model,
-            'book_author' => $author,
-            'book_file' => $file
+            'book_author' => $book_author,
+            'book_file' => $book_file,
+            'category_list' => $this->findCategoryList()
         ]);
     }
 
@@ -176,10 +261,14 @@ class BookController extends Controller
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->delete();
-
+        $model = $this->findModel($id);
+        $model->status = $model->status === Book::STATUS_ACTIVE ? Book::STATUS_INACTIVE : Book::STATUS_ACTIVE;
+        if ($model->save()) {
+            $alert_message = $model->status === Book::STATUS_INACTIVE ? 'Kitob o\'chirildi' : 'Kitob qayta tiklandi';
+            Yii::$app->session->setFlash('success', $alert_message);
+        }
         return $this->redirect(['index']);
     }
 
@@ -190,12 +279,34 @@ class BookController extends Controller
      * @return Book the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): Book
     {
         if (($model = Book::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function findCategoryList(): array
+    {
+        $categories = \app\models\Category::find()->where('status = :status', [
+            ':status' => true
+        ])->all();
+        return \yii\helpers\ArrayHelper::map($categories, 'id', 'title');
+    }
+
+    public function filePath($file_path): string
+    {
+        $file_root = Yii::getAlias("@app/web/");
+        return $file_root . $file_path;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function randomFileName($file): string
+    {
+        return date('d_m_Y') . '_' . Yii::$app->security->generateRandomString(32) . '.' . $file->extension;
     }
 }

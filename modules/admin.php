@@ -15,8 +15,6 @@ class admin extends \yii\base\Module
 
     public $layout = 'main';
 
-    public $defaultRoute = '/web/admin/default';
-
     /**
      * {@inheritdoc}
      */

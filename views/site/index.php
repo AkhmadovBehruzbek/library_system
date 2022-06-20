@@ -7,23 +7,24 @@ use app\models\Category;
 use yii\widgets\LinkPager;
 
 ?>
-
 <!-- Start Banner -->
-<div class="ht__bradcaump__area bg-image--6">
+<div class="slider-area brown__nav slider--15 slide__activation slide__arrow01 owl-carousel owl-theme">
+<div class="slide animation__style10 bg-image--6 fullscreen align__center--left">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <div class="bradcaump__inner text-center">
-                    <h2 class="bradcaump-title">Shop Grid</h2>
-                    <nav class="bradcaump-content">
-                        <a class="breadcrumb_item" href="index.html">Home</a>
-                        <span class="brd-separetor">/</span>
-                        <span class="breadcrumb_item active">Shop Grid</span>
-                    </nav>
+                <div class="slider__content">
+                    <div class="contentbox">
+                        <h2>Toshkent <span>Davlat </span></h2>
+                        <h2>Texnika <span>Universiteti </span></h2>
+                        <h2>On-Line <span>Kutubxonasi </span></h2>
+                        <a class="shopbtn" href="http://tdtu.uz">TDTU saytiga o'tish</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 <!-- End Banner -->
 <!-- Start Shop Page -->
@@ -33,16 +34,16 @@ use yii\widgets\LinkPager;
             <div class="col-lg-3 col-12 order-2 order-lg-1 md-mt-40 sm-mt-40">
                 <div class="shop__sidebar">
                     <aside class="wedget__categories poroduct--cat">
-                        <h3 class="wedget__title">Product Categories</h3>
+                        <h3 class="wedget__title">Kategoriya</h3>
                         <ul>
                             <?php
                             foreach ($categories as $category): ?>
-                                <li><a href="#"><?= $category['title'] ?> <span>(3)</span></a></li>
+                                <li><a href="#"><?= $category['title'] ?> <span>(<?= $category['book_count'] ?>)</span></a></li>
                             <?php endforeach; ?>
                         </ul>
                     </aside>
                     <aside class="wedget__categories poroduct--tag">
-                        <h3 class="wedget__title">Product Tags</h3>
+                        <h3 class="wedget__title">Kalit so'zlar</h3>
                         <ul>
                             <li><a href="#">Biography</a></li>
                             <li><a href="#">Business</a></li>
@@ -99,10 +100,10 @@ use yii\widgets\LinkPager;
                             <?php foreach ($books as $book): ?>
                                 <div class="product product__style--3 col-lg-4 col-md-4 col-sm-6 col-12">
                                     <div class="product__thumb">
-                                        <a class="first__img" href="/web/about/<?= $book['id'] ?>"><img
+                                        <a class="first__img" href="/web/book/<?= $book['id'] ?>"><img
                                                     src="/web/images/book/<?= $book['image'] ?>"
                                                     alt="product image"></a>
-                                        <a class="second__img animation1" href="/web/about/<?= $book['id'] ?>"><img
+                                        <a class="second__img animation1" href="/web/book/<?= $book['id'] ?>"><img
                                                     src="/web/images/book/<?= $book['image'] ?>"
                                                     alt="product image"></a>
                                         <div class="hot__box">
@@ -110,7 +111,7 @@ use yii\widgets\LinkPager;
                                         </div>
                                     </div>
                                     <div class="content--center">
-                                        <h4><a href="/web/about/<?= $book['id'] ?>"><?= $book['name'] ?></a></h4>
+                                        <h4><a href="/web/book/<?= $book['id'] ?>"><?= $book['name'] ?></a></h4>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

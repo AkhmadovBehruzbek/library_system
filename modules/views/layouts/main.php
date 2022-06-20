@@ -41,6 +41,7 @@ AdminAsset::register($this);
                 ['label' => 'Bosh sahifa', 'url' => ['/admin/default']],
                 ['label' => 'Kategoriyalar', 'url' => ['/admin/category']],
                 ['label' => 'Kitoblar', 'url' => ['/admin/book']],
+                ['label' => 'Xabarlar', 'url' => ['/admin/contact']],
                 Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
                 ) : (
@@ -60,9 +61,10 @@ AdminAsset::register($this);
     </header>
 
     <main role="main" class="flex-shrink-0">
-        <div class="container-fluid">
+        <div class="container-fluid" style="margin-top: 60px!important;">
             <?= Breadcrumbs::widget([
                 'links' => $this->params['breadcrumbs'] ?? [],
+                'homeLink' => ['label' => 'Bosh sahifa', 'url' => '/web/admin/default'],
             ]) ?>
             <?= Alert::widget() ?>
             <?= $content ?>

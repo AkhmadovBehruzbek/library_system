@@ -8,14 +8,22 @@ use yii\helpers\Html;
 $this->title = 'Kategoriyani o\'zgartirish: ' . $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'Kategoriyalar', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Tahrirlash';
 ?>
 <div class="category-update">
+    <div class="section-body">
+        <div class="container">
+            <div class="card">
+                <div class="card-body">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+                    <h3><?= Html::encode($this->title) ?></h3>
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+                    <?= $this->render('_form', [
+                        'model' => $model,
+                    ]) ?>
 
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

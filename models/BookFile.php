@@ -46,9 +46,9 @@ class BookFile extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'book_id' => 'Book ID',
-            'file_name' => 'File Name',
-            'file_path' => 'File Path',
-            'file_size' => 'File Size',
+            'file_name' => 'Fayl nomi',
+            'file_path' => 'Fayl path',
+            'file_size' => 'Fayl hajmi',
         ];
     }
 }

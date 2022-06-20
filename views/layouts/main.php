@@ -29,10 +29,10 @@ AppAsset::register($this);
 <!-- Main wrapper -->
 <div class="wrapper" id="wrapper">
     <!-- Header -->
-    <header id="wn__header" class="header__area header__absolute sticky__header">
+    <header id="wn__header" class="oth-page header__area header__absolute sticky__header">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-6 col-sm-6 col-6 col-lg-2">
+                <div class="col-md-4 col-sm-4 col-7 col-lg-2">
                     <div class="logo">
                         <a href="index.html">
                             <img src="<?= \yii\helpers\Url::base() ?>/images/logo/logo.png" alt="logo images">
@@ -43,36 +43,10 @@ AppAsset::register($this);
                     <nav class="mainmenu__nav">
                         <ul class="meninmenu d-flex justify-content-start">
                             <li class="drop with--one--item"><a href="index.html">Bosh sahifa</a></li>
-                            <li class="drop"><a href="shop-grid.html">Kitoblar</a></li>
-                            <li><a href="contact.html">Biz bilan aloqa</a></li>
+                            <li class="drop"><a href="#">Kitoblar</a></li>
+                            <li><a href="contact.html">Contact</a></li>
                         </ul>
                     </nav>
-                </div>
-                <div class="col-md-6 col-sm-6 col-6 col-lg-2">
-                    <ul class="header__sidebar__right d-flex justify-content-end align-items-center">
-                        <li class="setting__bar__icon"><a class="setting__active" href="#"></a>
-                            <div class="searchbar__content setting__block">
-                                <div class="content-inner">
-                                    <div class="switcher-currency">
-                                        <strong class="label switcher-label">
-                                            <span>My Account</span>
-                                        </strong>
-                                        <div class="switcher-options">
-                                            <div class="switcher-currency-trigger">
-                                                <div class="setting__menu">
-                                                    <span><a href="#">Compare Product</a></span>
-                                                    <span><a href="#">My Account</a></span>
-                                                    <span><a href="#">My Wishlist</a></span>
-                                                    <span><a href="#">Sign In</a></span>
-                                                    <span><a href="#">Create An Account</a></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
                 </div>
             </div>
             <!-- Start Mobile Menu -->
@@ -81,9 +55,8 @@ AppAsset::register($this);
                     <nav class="mobilemenu__nav">
                         <ul class="meninmenu">
                             <li><a href="index.html">Bosh sahifa</a></li>
-                            <li><a href="shop-grid.html">Kitoblar</a></li>
-                            <li><a href="contact.html">Biz bilan aloqa</a></li>
-                        </ul>
+                            <li><a href="about.html">Kitoblar</a></li>
+                            <li><a href="contact.html">Contact</a></li>
                     </nav>
                 </div>
             </div>

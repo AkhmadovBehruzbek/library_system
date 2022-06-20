@@ -5,6 +5,7 @@ namespace app\modules\controllers;
 use app\models\Category;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\db\Exception;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
@@ -41,7 +42,6 @@ class CategoryController extends RoleController
     {
         $query = Category::find();
         $dataProvider = new ActiveDataProvider(['query' => $query]);
-
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);
@@ -51,12 +51,12 @@ class CategoryController extends RoleController
      * Displays a single Category model.
      * @param int $id ID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
+     * @throws Exception
      */
     public function actionView(int $id): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findCategory($id),
         ]);
     }
 
@@ -119,7 +119,8 @@ class CategoryController extends RoleController
         $model = $this->findModel($id);
         $model->status = $model->status === Category::STATUS_ACTIVE ? Category::STATUS_INACTIVE : Category::STATUS_ACTIVE;
         if ($model->save()) {
-            Yii::$app->session->setFlash('success', 'Kategoriya o\'chirildi');
+            $alert_message = $model->status === Category::STATUS_INACTIVE ? 'Kategoriya o\'chirildi' : 'Kategoriya qayta tiklandi';
+            Yii::$app->session->setFlash('success', $alert_message);
         }
         return $this->redirect(['index']);
     }
@@ -138,5 +139,17 @@ class CategoryController extends RoleController
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function findCategory(int $id)
+    {
+        $sql = 'SELECT category.*, (SELECT COUNT(*) FROM {{book}} WHERE [[category.id]] = [[book.category_id]] AND status = :status) AS book_count FROM {{category}} WHERE status = :status AND id = :id';
+        $query = Yii::$app->db->createCommand($sql);
+        $query->bindValue(':status', Category::STATUS_ACTIVE);
+        $query->bindValue(':id', $id);
+        return $query->queryOne();
     }
 }
