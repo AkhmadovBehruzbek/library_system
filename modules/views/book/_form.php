@@ -12,7 +12,9 @@ use yii\widgets\MaskedInput;
 /* @var $book_author app\models\BookAuthor */
 /* @var $form yii\widgets\ActiveForm */
 /* @var $category_list app\models\Category */
+
 ?>
+
 
 <div class="book-form">
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>

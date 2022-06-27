@@ -12,9 +12,12 @@ use Yii;
  * @property string|null $email
  * @property string|null $description
  * @property string $created_date
+ * @property int $status [smallint(6)]
  */
 class Contact extends \yii\db\ActiveRecord
 {
+    public const STATUS_ACTIVE = 1;
+
     /**
      * {@inheritdoc}
      */
@@ -43,7 +46,7 @@ class Contact extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'full_name' => 'F.I.O',
-            'email' => 'Email',
+            'email' => 'Elektron pochta',
             'description' => 'Xabar',
             'created_date' => 'Yuborilgan sana',
         ];

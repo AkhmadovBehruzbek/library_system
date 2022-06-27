@@ -167,6 +167,12 @@ class BookController extends RoleController
 
         $model = $this->findModel($id);
         $book_author = BookAuthor::findOne(['book_id' => $model->id]);
+        $book_authors = BookAuthor::find()->asArray()->where(['book_id' => $model->id])->all();
+        $string_author = '';
+        foreach ($book_authors as $author) {
+            $string_author .= $author['full_name'] . ',';
+        }
+        $book_author->full_name = $string_author;
         $book_file = BookFile::findOne(['book_id' => $model->id]);
         $old_file_name = $book_file->file_name;
         $old_file_size = $book_file->file_size;

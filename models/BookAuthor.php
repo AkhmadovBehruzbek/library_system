@@ -16,6 +16,8 @@ use yii\db\ActiveQuery;
  */
 class BookAuthor extends \yii\db\ActiveRecord
 {
+    public const STATUS_ACTIVE = 1;
+
     /**
      * {@inheritdoc}
      */

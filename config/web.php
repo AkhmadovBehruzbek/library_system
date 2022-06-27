@@ -57,6 +57,7 @@ $config = [
             'rules' => [
                 '<alias:login>' => 'site/<alias>',
                 '<alias:book>/<id:(?:[^_\W]|-)+>' => 'site/<alias>',
+                'search' => 'site/search'
             ],
         ],
         'formatsize' => [

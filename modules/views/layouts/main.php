@@ -73,8 +73,11 @@ AdminAsset::register($this);
 
     <footer class="footer mt-auto py-3 text-muted">
         <div class="container">
-            <p class="float-left">&copy; My Company <?= date('Y') ?></p>
-            <p class="float-right"><?= Yii::powered() ?></p>
+            <p class="float-left">&copy; Toshkent Davlat Texnika Universiteti <?= date('Y') ?></p>
+            <p class="float-right"><?= \Yii::t('yii', '{yii} tomonidan qo\'llab quvvatlanadi', [
+                    'yii' => '<a href="https://telegram.me/mr_Akhmadov" rel="external">' . \Yii::t('yii',
+                            'Behruzbek Axmadov') . '</a>',
+                ]); ?></p>
         </div>
     </footer>
 

@@ -15,9 +15,12 @@ use Yii;
  * @property string $created_date
  *
  * @property Book $book
+ * @property int $status [smallint(6)]
  */
 class Comment extends \yii\db\ActiveRecord
 {
+    public const STATUS_ACTIVE = 1;
+
     /**
      * {@inheritdoc}
      */
@@ -46,11 +49,11 @@ class Comment extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'book_id' => 'Book ID',
-            'full_name' => 'Full Name',
-            'email' => 'Email',
-            'description' => 'Description',
-            'created_date' => 'Created Date',
+            'book_id' => 'Kitob nomi',
+            'full_name' => 'F.I.O',
+            'email' => 'Elektron Pochta',
+            'description' => 'Fikr',
+            'created_date' => 'Kiritilgan sana',
         ];
     }
 

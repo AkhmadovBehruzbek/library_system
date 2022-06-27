@@ -34,7 +34,7 @@ class m220616_071813_create_first_migrate_table extends Migration
             'id' => $this->primaryKey(),
             'category_id' => $this->integer(),
             'name' => $this->string(),
-            'description' => $this->string(),
+            'description' => $this->text(),
             'pages_count' => $this->integer(),
             'published_date' => $this->integer(),
             'image' => $this->string(),

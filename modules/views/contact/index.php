@@ -27,7 +27,17 @@ $this->params['breadcrumbs'][] = $this->title;
                         'full_name',
                         'email:email',
                         'description:ntext',
-                        'status',
+                        [
+                            'attribute' => 'status',
+                            'format' => 'raw',
+                            'value' => static function ($model) {
+                                if ($model->status === Contact::STATUS_ACTIVE) {
+                                    return '<span class="badge badge-pill badge-success">Aktiv</span>';
+                                }
+
+                                return '<span class="badge badge-pill badge-danger">Aktiv emas</span>';
+                            }
+                        ],
                         [
                             'attribute' => 'created_date',
                             'value' => static function ($model) {

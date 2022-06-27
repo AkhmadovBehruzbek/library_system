@@ -74,7 +74,10 @@ class SiteController extends Controller
         $query = Book::find()
             ->select(['id', 'name', 'image'])
             ->where(['status' => 1])
-            ->asArray();
+            ->asArray()
+            ->orderBy(['id' => SORT_DESC]);
+
+
         $countQuery = clone $query;
         $pages = new Pagination(['totalCount' => $countQuery->count(), 'defaultPageSize' => 15]);
         $books = $query->offset($pages->offset)
@@ -85,6 +88,7 @@ class SiteController extends Controller
             'categories' => $this->findCategory(),
             'books' => $books,
             'pages' => $pages,
+            'authors' => $this->findAuthor()
         ]);
     }
 
@@ -99,16 +103,23 @@ class SiteController extends Controller
     {
         $book = $this->findBook($id);
         $book_file = BookFile::findOne(['book_id' => $book['id']]);
-        $book_author = BookAuthor::findOne(['book_id' => $book['id']]);
+        $book_author = BookAuthor::findAll(['book_id' => $book['id']]);
         $categories = Category::find()
             ->where(['status' => Category::STATUS_ACTIVE])
             ->asArray()
+            ->all();
+        $books = Book::find()
+            ->select(['id', 'image', 'name'])
+            ->asArray()
+            ->where(['status' => Book::STATUS_ACTIVE, 'category_id' => $book['category_id']])
+            ->limit(10)
             ->all();
         return $this->render('about', [
             'book' => $book,
             'book_file' => $book_file,
             'book_author' => $book_author,
-            'categories' => $categories
+            'categories' => $categories,
+            'books' => $books
         ]);
     }
 
@@ -167,6 +178,31 @@ class SiteController extends Controller
     }
 
     /**
+     * @throws Exception
+     */
+    public function actionSearch(): string
+    {
+        $q = trim($this->request->get('q'));
+        $query = Book::find()->where(['like', 'name', $q]);
+        $pages = new Pagination(['totalCount' => $query->count(), 'PageSize' => 15]);
+        $books = $query->offset($pages->offset)->limit($pages->limit)->all();
+        if (!$q) {
+            return $this->render('search', [
+                'categories' => $this->findCategory(),
+                'authors' => $this->findAuthor(),
+                'pages' => $pages,
+                'books' => ''
+            ]);
+        }
+        return $this->render('index', [
+            'categories' => $this->findCategory(),
+            'books' => $books,
+            'pages' => $pages,
+            'authors' => $this->findAuthor()
+        ]);
+    }
+
+    /**
      * Displays contact page.
      *
      * @return Response|string
@@ -218,6 +254,28 @@ class SiteController extends Controller
         $query = Yii::$app->db->createCommand($sql);
         $query->bindValue(':status', Category::STATUS_ACTIVE);
         return $query->queryAll();
+    }
+
+    private function findAuthorTags(int $id): array
+    {
+        return BookAuthor::find()
+            ->asArray()
+            ->where(['book_id' => $id])
+            ->all();
+
+    }
+
+    public function findAuthor(): array
+    {
+        $book_authors = BookAuthor::find()->asArray()->limit(30)->all();
+        $author_arr = [];
+        foreach ($book_authors as $author) {
+            if (!in_array($author['full_name'], $author_arr, true)) {
+                $author_arr[] = $author['full_name'];
+            }
+        }
+
+        return $author_arr;
     }
 
 

@@ -8,7 +8,7 @@
 use yii\bootstrap4\ActiveForm;
 use yii\bootstrap4\Html;
 
-$this->title = 'On-Line Library';
+$this->title = 'On-Line Kutubxona';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-login">

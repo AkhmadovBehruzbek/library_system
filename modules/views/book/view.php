@@ -40,7 +40,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'label' => 'Muallif',
-                            'value' => $model->bookAuthors->full_name
+                            'value' => static function ($model) {
+                                $authors =  \app\models\BookAuthor::findAll(['book_id' => $model->id]);
+                                $author = '';
+                                foreach ($authors as $item) {
+                                    $author .= $item['full_name'] . ', ';
+                                }
+                                return $author;
+                            }
                         ],
                         [
                             'label' => 'Ko\'rishlar soni',
